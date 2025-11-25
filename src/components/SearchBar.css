@@ -22,22 +22,34 @@
 }
 
 .suggestions {
-  margin-top: 0.5rem;
-  background: rgba(255, 255, 255, 0.06);
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   backdrop-filter: blur(6px);
   overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  z-index: 5;
 }
 
 .suggestion-row {
   padding: 0.65rem 0.9rem;
   color: #ffffff;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: transform 120ms ease, background-color 120ms ease, color 120ms ease;
+  cursor: pointer;
 }
 
 .suggestion-row:last-child {
   border-bottom: none;
+}
+
+.suggestion-row:hover {
+  transform: scale(1.01);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .suggestion-row.muted {
