@@ -188,14 +188,13 @@ export async function insertPriceSnapshots(
     await db`
       INSERT INTO lostark_market_prices (
         item_id, recent_price, current_min_price, yday_avg_price,
-        category_code, recorded_at
+        recorded_at
       )
       VALUES (
         ${item.Id},
         ${item.RecentPrice},
         ${item.CurrentMinPrice},
         ${item.YDayAvgPrice},
-        ${categoryCode},
         ${snapshotTime}
       )
     `;
