@@ -1,15 +1,32 @@
 import './App.css'
+import SearchBar from './components/SearchBar'
+
+const placeholders = [
+  { title: '상승 아이템 #1', message: '데이터 수집 중입니다.' },
+  { title: '상승 아이템 #2', message: '데이터 수집 중입니다.' },
+  { title: '상승 아이템 #3', message: '데이터 수집 중입니다.' },
+  { title: '상승 아이템 #4', message: '데이터 수집 중입니다.' },
+]
 
 function App() {
   return (
-    <>
-      <div className='main_container'>
+    <div className='page'>
+      <header className='header'>
         <h1 className='main_title'>LOA FLOW</h1>
-        <p style={{ marginTop: '1rem', color: '#555' }}>
-          Netlify Scheduled Function이 10분마다 가격을 자동 저장합니다.
-        </p>
-      </div>
-    </>
+      </header>
+
+      <main className='content'>
+        <SearchBar />
+        <div className='charts'>
+          {placeholders.map((item) => (
+            <div className='chart-card' key={item.title}>
+              <div className='chart-card__title'>{item.title}</div>
+              <div className='chart-card__body'>{item.message}</div>
+            </div>
+          ))}
+        </div>
+      </main>
+    </div>
   )
 }
 

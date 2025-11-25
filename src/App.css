@@ -1,42 +1,74 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0a2a56 0%, #030712 100%);
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
 #root {
-  max-width: 1280px;
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
+.page {
+  min-height: 100vh;
+  color: #cfd7e3;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.25rem 1rem;
+  background: linear-gradient(180deg, #000000 0%, #00000000 100%);
+  backdrop-filter: blur(6px);
+  z-index: 10;
+}
+
+.main_title {
+  margin: 0;
+  color: #ffffff;
+  font-size: 2.5rem;
+  letter-spacing: 0.08em;
+}
+
+.content {
+  padding: 9rem 1.5rem 3rem;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.charts {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.chart-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(4px);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.chart-card__title {
+  font-size: 1.1rem;
+  color: #ffffff;
+  margin-bottom: 0.4rem;
 }
 
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+.chart-card__body {
+  color: #cfd7e3;
+  font-size: 0.95rem;
+  opacity: 0.85;
 }

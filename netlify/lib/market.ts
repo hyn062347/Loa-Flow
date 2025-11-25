@@ -1,12 +1,13 @@
 import { neon } from '@neondatabase/serverless';
 
+
+
 export const API_BASE_URL = 'https://developer-lostark.game.onstove.com';
 const API_KEY = process.env.API_KEY;
 const DATABASE_URL =
   process.env.DATABASE_URL || process.env.NEON_DATABASE_URL || process.env.NETLIFY_DATABASE_URL;
 const MAX_PAGE = Number(process.env.MAX_PAGE ?? '50');
 export const DEFAULT_CATEGORY_CODE = Number(process.env.DEFAULT_CATEGORY_CODE ?? '50000');
-
 export type MarketSortKey = 'GRADE' | 'YDAY_AVG_PRICE' | 'RECENT_PRICE' | 'CURRENT_MIN_PRICE';
 export type SortDirection = 'ASC' | 'DESC';
 
@@ -41,7 +42,9 @@ const sql = DATABASE_URL ? neon(DATABASE_URL) : null;
 
 function requireSql() {
   if (!sql) {
-    throw new Error('DATABASE_URL 또는 NEON_DATABASE_URL 환경 변수가 설정되지 않았습니다.');
+    throw new Error(
+      'DATABASE_URL / NEON_DATABASE_URL / NETLIFY_DATABASE_URL 환경 변수가 설정되지 않았습니다.',
+    );
   }
   return sql;
 }
@@ -199,4 +202,18 @@ export async function insertPriceSnapshots(
       )
     `;
   }
+}
+
+export async function queryItemNames(search: string, limit = 10) {
+  if (!search || !search.trim()) return [];
+  const db = requireSql();
+  const pattern = `%${search.trim()}%`;
+  const rows = (await db`
+  SELECT id, name
+  FROM lostark_items
+  WHERE name ILIKE ${pattern}
+  ORDER BY name ASC
+  LIMIT ${limit}
+`) as { id: number; name: string }[];
+  return rows;
 }
