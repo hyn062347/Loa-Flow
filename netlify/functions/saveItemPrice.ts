@@ -2,7 +2,7 @@ import type { Config } from '@netlify/functions';
 import { neon } from '@neondatabase/serverless';
 
 export const config: Config = {
-  schedule: '*/10 * * * *', // 매 10분
+  schedule: '*/5 * * * *', // 매 5분
 };
 
 const API_BASE_URL = 'https://developer-lostark.game.onstove.com';
