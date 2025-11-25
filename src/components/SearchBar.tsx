@@ -25,7 +25,6 @@ export default function SearchBar() {
       abortRef.current?.abort()
       const controller = new AbortController()
       abortRef.current = controller
-      setLoading(true)
       try {
         const params = new URLSearchParams({ q: query.trim(), limit: '8' })
         const res = await fetch(`/.netlify/functions/searchItems?${params.toString()}`, {
