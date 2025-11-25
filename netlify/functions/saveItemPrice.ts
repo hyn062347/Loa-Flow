@@ -50,12 +50,17 @@ async function searchMarket(
     throw new Error('API_KEY 환경 변수가 설정되지 않았습니다.');
   }
 
+  const authorization =
+    API_KEY.startsWith('Bearer ') || API_KEY.startsWith('bearer ')
+      ? API_KEY
+      : `Bearer ${API_KEY}`;
+
   const response = await fetch(`${API_BASE_URL}/markets/items`, {
     method: 'POST',
     headers: {
       accept: 'application/json',
       'content-type': 'application/json',
-      authorization: `${API_KEY}`,
+      authorization,
     },
     body: JSON.stringify(payload),
     signal: options?.signal,
@@ -173,13 +178,22 @@ async function saveItems(items: MarketItem[], categoryCode: number) {
   }
 }
 
-export async function handler() {
+export async function handler(event?: any) {
   try {
-    const categoryCode = DEFAULT_CATEGORY_CODE;
+    const body = event?.body ? JSON.parse(event.body) : null;
+    const overrideCategory = body?.categoryCode ? Number(body.categoryCode) : undefined;
+    const categoryCode =
+      overrideCategory && !Number.isNaN(overrideCategory)
+        ? overrideCategory
+        : DEFAULT_CATEGORY_CODE;
 
     if (!categoryCode || Number.isNaN(categoryCode)) {
       throw new Error('DEFAULT_CATEGORY_CODE 환경 변수가 숫자가 아닙니다.');
     }
+
+    console.info(
+      `[saveItemPrice] 시작 - category=${categoryCode}, time=${new Date().toISOString()}`,
+    );
 
     await ensureTable();
 
