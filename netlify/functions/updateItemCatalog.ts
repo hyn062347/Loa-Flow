@@ -3,12 +3,11 @@ import {
   DEFAULT_CATEGORY_CODE,
   ensureTables,
   getAllMarketItemsInCategory,
-  insertPriceSnapshots,
   upsertItems,
 } from '../lib/market';
 
 export const config: Config = {
-  schedule: '*/5 * * * *', // 매 5분
+  schedule: '0 10 * * 3', // 매주 수요일 10시
 };
 
 export default async function handler(req: Request, _context: Context) {
@@ -28,28 +27,27 @@ export default async function handler(req: Request, _context: Context) {
 
     const snapshotTime = new Date();
     console.info(
-      `[saveItemPrice] 시작 - category=${categoryCode}, time=${snapshotTime.toISOString()}`,
+      `[updateItemCatalog] 시작 - category=${categoryCode}, time=${snapshotTime.toISOString()}`,
     );
 
     await ensureTables();
     const items = await getAllMarketItemsInCategory(categoryCode);
 
     if (items.length === 0) {
-      console.info(`[saveItemPrice] 저장할 아이템이 없습니다. category=${categoryCode}`);
+      console.info(`[updateItemCatalog] 업데이트할 아이템이 없습니다. category=${categoryCode}`);
       return new Response(null, { status: 200 });
     }
 
     await upsertItems(items, categoryCode, snapshotTime);
-    await insertPriceSnapshots(items, categoryCode, snapshotTime);
 
     console.info(
-      `[saveItemPrice] 저장 완료 - category=${categoryCode}, count=${items.length}`,
+      `[updateItemCatalog] 업데이트 완료 - category=${categoryCode}, count=${items.length}`,
     );
 
     return new Response(null, { status: 200 });
   } catch (err) {
     console.error(
-      '[saveItemPrice] 오류:',
+      '[updateItemCatalog] 오류:',
       err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.',
     );
     return new Response('error', { status: 500 });
