@@ -22,7 +22,7 @@ export default function SearchBar() {
       setHighlightIndex(-1)
       return
     }
-
+    setHighlightIndex(-1)
     const timer = setTimeout(async () => {
       abortRef.current?.abort()
       const controller = new AbortController()
@@ -87,12 +87,12 @@ export default function SearchBar() {
       e.preventDefault()
       setHighlightIndex((prev) => {
         if (suggestions.length === 0) return -1
-        if(prev <= 0) return suggestions.length -1
+        if (prev <= 0) return suggestions.length - 1
         return prev - 1
       })
     }
     if (e.key === 'Enter') {
-      if(highlightIndex >= 0 && highlightIndex < suggestions.length){
+      if (highlightIndex >= 0 && highlightIndex < suggestions.length) {
         e.preventDefault()
         const selected = suggestions[highlightIndex]
         handleSelect(selected.name)
@@ -123,13 +123,12 @@ export default function SearchBar() {
           {!loading &&
             suggestions.map((s, index) => (
               <div
-                className={`suggestion-row ${
-                  index === highlightIndex ? 'active' : ''
-                }`}
+                className={`suggestion-row ${index === highlightIndex ? 'active' : ''
+                  }`}
                 key={s.id}
                 onMouseDown={() => handleSelect(s.name)}
                 onMouseEnter={() => setHighlightIndex(index)} // 마우스 올리면 하이라이트 이동
-                >
+              >
                 {s.name}
               </div>
             ))}
