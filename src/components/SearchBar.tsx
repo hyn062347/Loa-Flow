@@ -121,12 +121,15 @@ export default function SearchBar() {
             <div className='suggestion-row muted'>검색 결과가 없습니다.</div>
           )}
           {!loading &&
-            suggestions.map((s) => (
+            suggestions.map((s, index) => (
               <div
-                className='suggestion-row'
+                className={`suggestion-row ${
+                  index === highlightIndex ? 'active' : ''
+                }`}
                 key={s.id}
                 onMouseDown={() => handleSelect(s.name)}
-              >
+                onMouseEnter={() => setHighlightIndex(index)} // 마우스 올리면 하이라이트 이동
+                >
                 {s.name}
               </div>
             ))}
