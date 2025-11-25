@@ -1,6 +1,7 @@
+import type { Config } from '@netlify/functions';
 import { neon } from '@neondatabase/serverless';
 
-export const config = {
+export const config: Config = {
   schedule: '*/10 * * * *', // 매 10분
 };
 
