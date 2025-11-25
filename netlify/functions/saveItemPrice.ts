@@ -1,4 +1,4 @@
-import type { Config } from '@netlify/functions';
+import type { Config, Context } from '@netlify/functions';
 import { neon } from '@neondatabase/serverless';
 
 export const config: Config = {
@@ -179,9 +179,12 @@ async function saveItems(items: MarketItem[], categoryCode: number) {
   }
 }
 
-export async function handler(event?: any) {
+export default async function handler(req: Request, _context: Context) {
   try {
-    const body = event?.body ? JSON.parse(event.body) : null;
+    // scheduled 실행 시 body에는 { next_run } 정도만 들어올 수 있음
+    const eventBody = await req.json().catch(() => null);
+    const body = eventBody ?? null;
+
     const overrideCategory = body?.categoryCode ? Number(body.categoryCode) : undefined;
     const categoryCode =
       overrideCategory && !Number.isNaN(overrideCategory)
@@ -197,11 +200,11 @@ export async function handler(event?: any) {
     );
 
     await ensureTable();
-
     const items = await getAllMarketItemsInCategory(categoryCode);
+
     if (items.length === 0) {
       console.info(`[saveItemPrice] 저장할 아이템이 없습니다. category=${categoryCode}`);
-      return;
+      return new Response(null, { status: 200 });
     }
 
     await saveItems(items, categoryCode);
@@ -209,11 +212,13 @@ export async function handler(event?: any) {
     console.info(
       `[saveItemPrice] 저장 완료 - category=${categoryCode}, count=${items.length}`,
     );
+
+    return new Response(null, { status: 200 });
   } catch (err) {
     console.error(
       '[saveItemPrice] 오류:',
       err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.',
     );
-    throw err;
+    return new Response('error', { status: 500 });
   }
 }
