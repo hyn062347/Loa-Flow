@@ -11,6 +11,7 @@ export default function SearchBar() {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
+  const [highlightIndex, setHighlightIndex] = useState(-1) // 👈 현재 선택된 인덱스
   const containerRef = useRef<HTMLDivElement | null>(null)
   const abortRef = useRef<AbortController | null>(null)
 
@@ -18,6 +19,7 @@ export default function SearchBar() {
     if (!query.trim()) {
       setSuggestions([])
       setOpen(false)
+      setHighlightIndex(-1)
       return
     }
 
@@ -37,9 +39,12 @@ export default function SearchBar() {
         }
         const data: Suggestion[] = await res.json()
         setSuggestions(data)
+        // 새 목록이 생기면 첫 번째를 하이라이트
+        setHighlightIndex(data.length > 0 ? 0 : -1)
       } catch (error) {
         if ((error as Error).name !== 'AbortError') {
           setSuggestions([])
+          setHighlightIndex(-1)
         }
       } finally {
         setLoading(false)
@@ -53,6 +58,7 @@ export default function SearchBar() {
     const onClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setOpen(false)
+        setHighlightIndex(-1)
       }
     }
     document.addEventListener('mousedown', onClickOutside)
@@ -65,6 +71,43 @@ export default function SearchBar() {
   const handleSelect = (name: string) => {
     setQuery(name)
     setOpen(false)
+    setHighlightIndex(-1)
+  }
+
+  const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
+    // 드롭다운이 닫혀 있거나, 로딩 중이면 키보드 네비 무시
+    if (!open || loading) return
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setHighlightIndex((prev) => {
+        if (suggestions.length === 0) return -1
+        const next = prev + 1
+        return next >= suggestions.length ? 0 : next
+      })
+    }
+
+    if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setHighlightIndex((prev) => {
+        if (suggestions.length === 0) return -1
+        if (prev <= 0) return suggestions.length - 1
+        return prev - 1
+      })
+    }
+
+    if (e.key === 'Enter') {
+      if (highlightIndex >= 0 && highlightIndex < suggestions.length) {
+        e.preventDefault()
+        const selected = suggestions[highlightIndex]
+        handleSelect(selected.name)
+      }
+    }
+
+    if (e.key === 'Escape') {
+      setOpen(false)
+      setHighlightIndex(-1)
+    }
   }
 
   return (
@@ -77,6 +120,7 @@ export default function SearchBar() {
           setOpen(true)
         }}
         onFocus={() => setOpen(true)}
+        onKeyDown={handleKeyDown} // 👈 키보드 이벤트 연결
         placeholder='아이템 이름을 검색하세요'
       />
       {showSuggestions && (
@@ -86,11 +130,14 @@ export default function SearchBar() {
             <div className='suggestion-row muted'>검색 결과가 없습니다.</div>
           )}
           {!loading &&
-            suggestions.map((s) => (
+            suggestions.map((s, index) => (
               <div
-                className='suggestion-row'
+                className={`suggestion-row ${
+                  index === highlightIndex ? 'active' : ''
+                }`}
                 key={s.id}
                 onMouseDown={() => handleSelect(s.name)}
+                onMouseEnter={() => setHighlightIndex(index)} // 마우스 올리면 하이라이트 이동
               >
                 {s.name}
               </div>
