@@ -7,7 +7,7 @@ export const config: Config = {
 
 const API_BASE_URL = 'https://developer-lostark.game.onstove.com';
 const API_KEY = process.env.API_KEY;
-const DATABASE_URL = process.env.DATABASE_URL || process.env.NEON_DATABASE_URL;
+const DATABASE_URL = process.env.NETLIFY_DATABASE_URL;
 const MAX_PAGE = Number(process.env.MAX_PAGE ?? '50');
 const DEFAULT_CATEGORY_CODE = Number(process.env.DEFAULT_CATEGORY_CODE ?? '50000');
 
