@@ -66,14 +66,6 @@ export default function SearchBar() {
     setSuggestions([])
   }
 
-  const handleLKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) =>{
-    if(!open || loading) return
-
-    if(e.key === 'ArrowDown'){
-      e.preventDefault()
-    }
-  }
-
   return (
     <div className='search-bar' ref={containerRef}>
       <input
